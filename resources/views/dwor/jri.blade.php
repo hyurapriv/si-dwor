@@ -13,16 +13,16 @@
                         <div class="form-group mx-sm-3 mb-2">
                             <label for="year" class="sr-only">Tahun</label>
                             <select name="year" id="year" class="form-control">
-                                @foreach ($years as $yr)
-                                    <option value="{{ $yr }}" {{ $selectedYear == $yr ? 'selected' : '' }}>{{ $yr }}</option>
+                                @foreach ($tahun as $thn)
+                                    <option value="{{ $thn }}" {{ $selectedYear == $thn ? 'selected' : '' }}>{{ $thn }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="form-group mx-sm-3 mb-2">
                             <label for="month" class="sr-only">Bulan</label>
                             <select name="month" id="month" class="form-control">
-                                @foreach ($months as $num => $name)
-                                    <option value="{{ $num }}" {{ $selectedMonth == $num ? 'selected' : '' }}>{{ $name }}</option>
+                                @foreach ($bulan as $bln => $namaBln)
+                                    <option value="{{ $bln }}" {{ $selectedMonth == $bln ? 'selected' : '' }}>{{ $namaBln }}</option>
                                 @endforeach
                             </select>
                         </div>
