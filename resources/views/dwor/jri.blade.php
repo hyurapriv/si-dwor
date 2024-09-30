@@ -4,30 +4,28 @@
 <div class="main">
     <div class="main-content">
         <div class="container-fluid">
-            <h3 style="color:black;">Jumlah Rawat Inap</h3>
-            
-            <!-- Form Filter -->
-            <div class="panel">
-                <div class="panel-body">
-                    <form action="{{ route('jri') }}" method="GET" class="form-inline">
-                        <div class="form-group mx-sm-3 mb-2">
-                            <label for="year" class="sr-only">Tahun</label>
-                            <select name="year" id="year" class="form-control">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <h3 style="color:black;">Jumlah Rawat Inap</h3>
+                    </div>
+                    <div class="col-sm-4">
+                        <form action="{{ route('jri') }}" method="GET" class="form-inline">
+                            <select name="year" class="form-control mr-2">
                                 @foreach ($tahun as $thn)
-                                    <option value="{{ $thn }}" {{ $selectedYear == $thn ? 'selected' : '' }}>{{ $thn }}</option>
+                                    <option value="{{ $thn }}" {{ $selectedYear == $thn ? 'selected' : '' }}>
+                                        {{ $thn }}</option>
                                 @endforeach
                             </select>
-                        </div>
-                        <div class="form-group mx-sm-3 mb-2">
-                            <label for="month" class="sr-only">Bulan</label>
-                            <select name="month" id="month" class="form-control">
+                            <select name="month" class="form-control mr-2">
                                 @foreach ($bulan as $bln => $namaBln)
-                                    <option value="{{ $bln }}" {{ $selectedMonth == $bln ? 'selected' : '' }}>{{ $namaBln }}</option>
+                                    <option value="{{ $bln }}"
+                                        {{ $selectedMonth == $bln ? 'selected' : '' }}>{{ $namaBln }}</option>
                                 @endforeach
                             </select>
-                        </div>
-                        <button type="submit" class="btn btn-primary mb-2">Filter</button>
-                    </form>
+                            <button type="submit" class="btn btn-primary">Filter</button>
+                        </form>
+                    </div>
                 </div>
             </div>
 

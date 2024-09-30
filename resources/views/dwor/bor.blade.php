@@ -4,28 +4,30 @@
     <div class="main">
         <div class="main-content">
             <div class="container-fluid">
-                <h3 style="color:black;">Jumlah MRS</h3>
-                <form method="GET" action="{{ route('bor') }}" class="mb-4">
+                <div class="container">
                     <div class="row">
-                        <div class="col-md-3">
-                            <select name="year" class="form-control">
-                                @foreach($years as $yr)
-                                    <option value="{{ $yr }}" {{ $yr == $selectedYear ? 'selected' : '' }}>{{ $yr }}</option>
-                                @endforeach
-                            </select>
+                        <div class="col-sm-8">
+                            <h3 style="color:black;">Jumlah MRS</h3>
                         </div>
-                        <div class="col-md-3">
-                            <select name="month" class="form-control">
-                                @foreach($months as $num => $name)
-                                    <option value="{{ $num }}" {{ $num == $selectedMonth ? 'selected' : '' }}>{{ $name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <button type="submit" class="btn btn-primary">Filter</button>
+                        <div class="col-sm-4">
+                            <form action="{{ route('bor') }}" method="GET" class="form-inline">
+                                <select name="year" class="form-control mr-2">
+                                    @foreach ($tahun as $thn)
+                                        <option value="{{ $thn }}" {{ $selectedYear == $thn ? 'selected' : '' }}>
+                                            {{ $thn }}</option>
+                                    @endforeach
+                                </select>
+                                <select name="month" class="form-control mr-2">
+                                    @foreach ($bulan as $bln => $namaBln)
+                                        <option value="{{ $bln }}"
+                                            {{ $selectedMonth == $bln ? 'selected' : '' }}>{{ $namaBln }}</option>
+                                    @endforeach
+                                </select>
+                                <button type="submit" class="btn btn-primary">Filter</button>
+                            </form>
                         </div>
                     </div>
-                </form>
+                </div>
 
                 <div class="panel panel-headline">
                     <div class="panel-heading">
@@ -169,13 +171,13 @@
                 },
             },
             series: [
-                @foreach($chartData as $key => $data)
-                    @if($key != 'tanggal')
-                    {
-                        name: '{{ ucfirst(str_replace('_', ' ', $key)) }}',
-                        data: {!! json_encode($data) !!},
-                        visible: {{ $key == 'total' ? 'true' : 'false' }}
-                    },
+                @foreach ($chartData as $key => $data)
+                    @if ($key != 'tanggal')
+                        {
+                            name: '{{ ucfirst(str_replace('_', ' ', $key)) }}',
+                            data: {!! json_encode($data) !!},
+                            visible: {{ $key == 'total' ? 'true' : 'false' }}
+                        },
                     @endif
                 @endforeach
             ],
