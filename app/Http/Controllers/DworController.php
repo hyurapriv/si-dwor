@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Carbon\CarbonInterval;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class DworController extends Controller
 {
@@ -27,7 +28,7 @@ class DworController extends Controller
             ->orderBy('year', 'desc')
             ->pluck('year');
     }
-    
+
     private function getBulan()
     {
         return [
@@ -37,6 +38,20 @@ class DworController extends Controller
         ];
     }
 
+    private function getBulanFilter($selectedYear)
+    {
+        $currentYear = Carbon::now()->year;
+        $currentMonth = Carbon::now()->month;
+        $allMonths = $this->getBulan();
+
+        if ($selectedYear < $currentYear) {
+            return $allMonths;
+        } elseif ($selectedYear == $currentYear) {
+            return array_slice($allMonths, 0, $currentMonth, true);
+        } else {
+            return [];
+        }
+    }
     private function fetchFilteredData($table, $year, $month)
     {
         return DB::table($table)
@@ -70,7 +85,11 @@ class DworController extends Controller
         $chartData = $this->prepareChartData($data, ['total']);
 
         $years = $this->getTahun('dwor_jkp');
-        $months = $this->getBulan();
+        $months = $this->getBulanFilter($year);
+
+        if (!array_key_exists($month, $months)) {
+            $month = array_key_last($months);
+        }
 
         return view('dwor.dwor', [
             'chartData' => $chartData,
@@ -84,30 +103,41 @@ class DworController extends Controller
         ]);
     }
 
-    public function utama(Request $request, $poli)
-    {
-        $year = $request->input('year', Carbon::now()->year);
-        $month = $request->input('month', Carbon::now()->month);
+public function utama(Request $request, $poli = null)
+{
+    Log::info('Received poli value: ' . $poli); // Add this line for debugging
 
-        $data = $this->fetchFilteredData('dwor_jkp', $year, $month);
-        $poliColumn = $this->getPoliColumn($poli);
-        $chartData = $this->prepareChartData($data, ['total', $poliColumn]);
+    $year = $request->input('year', Carbon::now()->year);
+    $month = $request->input('month', Carbon::now()->month);
 
-        $years = $this->getTahun('dwor_jkp');
-        $months = $this->getBulan();
-        $poliInfo = $this->getPoliInfo($poli);
+    $data = $this->fetchFilteredData('dwor_jkp', $year, $month);
+    $poliColumn = $this->getPoliColumn($poli);
+    Log::info('Poli column: ' . $poliColumn); // Add this line for debugging
 
-        return view('dwor.dwor_poli', [
-            'chartData' => $chartData,
-            'judul' => 'index',
-            'xjudul' => $poliInfo['nama'],
-            'tahun' => $years,
-            'bulan' => $months,
-            'selectedYear' => $year,
-            'selectedMonth' => $month,
-            'selectedPoli' => $poli,
-        ]);
+    $chartData = $this->prepareChartData($data, ['total', $poliColumn]);
+
+    $years = $this->getTahun('dwor_jkp');
+    $months = $this->getBulanFilter($year);
+
+    if (!array_key_exists($month, $months)) {
+        $month = array_key_last($months);
     }
+
+    $poliInfo = $this->getPoliInfo($poli);
+    Log::info('Poli info: ' . json_encode($poliInfo)); // Add this line for debugging
+
+    return view('dwor.dwor_poli', [
+        'chartData' => $chartData,
+        'judul' => 'index',
+        'xjudul' => $poliInfo['nama'],
+        'tahun' => $years,
+        'bulan' => $months,
+        'selectedYear' => $year,
+        'selectedMonth' => $month,
+        'selectedPoli' => $poli,
+        'poliColumn' => $poliColumn,
+    ]);
+}
 
     public function bor(Request $request)
     {
@@ -116,10 +146,24 @@ class DworController extends Controller
 
         $data = $this->fetchFilteredData('dwor_bor_2', $year, $month);
         $columns = [
-            'total', 'igd', 'perinatologi', 'poli_anak', 'poli_bedah', 'poli_gigi_umum',
-            'poli_jantung', 'poli_konservasi_gigi', 'poli_kulit_kelamin', 'poli_kusta',
-            'poli_mata', 'poli_obgyn', 'poli_orthopedi', 'poli_peny_dalam', 'poli_tb',
-            'poli_tht_kl', 'poli_umum', 'rehab_medik'
+            'total',
+            'igd',
+            'perinatologi',
+            'poli_anak',
+            'poli_bedah',
+            'poli_gigi_umum',
+            'poli_jantung',
+            'poli_konservasi_gigi',
+            'poli_kulit_kelamin',
+            'poli_kusta',
+            'poli_mata',
+            'poli_obgyn',
+            'poli_orthopedi',
+            'poli_peny_dalam',
+            'poli_tb',
+            'poli_tht_kl',
+            'poli_umum',
+            'rehab_medik'
         ];
         $chartData = $this->prepareChartData($data, $columns);
 
@@ -194,10 +238,24 @@ class DworController extends Controller
 
         $data = $this->fetchFilteredData('dwor_jkpl', $year, $month);
         $columns = [
-            'total', 'igd', 'perinatologi', 'poli_anak', 'poli_bedah', 'poli_gigi_umum',
-            'poli_jantung', 'poli_konservasi_gigi', 'poli_kulit_kelamin', 'poli_kusta',
-            'poli_mata', 'poli_obgyn', 'poli_orthopedi', 'poli_peny_dalam', 'poli_tb',
-            'poli_tht_kl', 'poli_umum', 'rehab_medik'
+            'total',
+            'igd',
+            'perinatologi',
+            'poli_anak',
+            'poli_bedah',
+            'poli_gigi_umum',
+            'poli_jantung',
+            'poli_konservasi_gigi',
+            'poli_kulit_kelamin',
+            'poli_kusta',
+            'poli_mata',
+            'poli_obgyn',
+            'poli_orthopedi',
+            'poli_peny_dalam',
+            'poli_tb',
+            'poli_tht_kl',
+            'poli_umum',
+            'rehab_medik'
         ];
         $chartData = $this->prepareChartData($data, $columns);
 
@@ -222,10 +280,24 @@ class DworController extends Controller
 
         $data = $this->fetchFilteredData('dwor_jkpb', $year, $month);
         $columns = [
-            'total', 'igd', 'perinatologi', 'poli_anak', 'poli_bedah', 'poli_gigi_umum',
-            'poli_jantung', 'poli_konservasi_gigi', 'poli_kulit_kelamin', 'poli_kusta',
-            'poli_mata', 'poli_obgyn', 'poli_orthopedi', 'poli_peny_dalam', 'poli_tb',
-            'poli_tht_kl', 'poli_umum', 'rehab_medik'
+            'total',
+            'igd',
+            'perinatologi',
+            'poli_anak',
+            'poli_bedah',
+            'poli_gigi_umum',
+            'poli_jantung',
+            'poli_konservasi_gigi',
+            'poli_kulit_kelamin',
+            'poli_kusta',
+            'poli_mata',
+            'poli_obgyn',
+            'poli_orthopedi',
+            'poli_peny_dalam',
+            'poli_tb',
+            'poli_tht_kl',
+            'poli_umum',
+            'rehab_medik'
         ];
         $chartData = $this->prepareChartData($data, $columns);
 
@@ -261,10 +333,11 @@ class DworController extends Controller
             'tht_kl' => ['nama' => 'Poli THT KL', 'base_line' => 4, 'target' => 4],
             'umum' => ['nama' => 'Poli Umum', 'base_line' => 2, 'target' => 2],
         ];
-
+    
+        Log::info('Getting poli info for: ' . $poli); // Add this line for debugging
         return $poliInfoMap[$poli] ?? ['nama' => 'Unknown', 'base_line' => 0, 'target' => 0];
     }
-
+    
     private function getPoliColumn($poli)
     {
         $columnMap = [
@@ -283,7 +356,8 @@ class DworController extends Controller
             'tht_kl' => 'poli_tht_kl',
             'umum' => 'poli_umum',
         ];
-
+    
+        Log::info('Getting poli column for: ' . $poli); // Add this line for debugging
         return $columnMap[$poli] ?? 'unknown_column';
     }
 }

@@ -1,4 +1,4 @@
-{{-- dwor.blade.php --}}
+
 @extends('layouts.master')
 
 @section('content')
@@ -142,7 +142,7 @@
                 @if(isset($chartData['target']))
                 {
                     name: 'Target',
-                    data: {!! json_encode($chartData['target']) !!} 
+                    data: {!! json_encode($poliInfo['target']) !!} 
                 },
                 @endif
                 @if(isset($chartData['base_line']))
