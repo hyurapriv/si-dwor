@@ -23,6 +23,11 @@
 </head>
 
 <body>
+	<style>
+		body {
+			overflow-x: hidden;
+		}
+	</style>
 	<!-- WRAPPER -->
 	<div id="wrapper">
 		<!-- NAVBAR -->

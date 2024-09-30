@@ -1,6 +1,28 @@
+{{-- JRI --}}
 @extends('layouts.master')
 
 @section('content')
+<style>
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .table th,
+    .table td {
+        white-space: nowrap;
+    }
+
+    @media (max-width: 768px) {
+        .form-inline {
+            flex-wrap: wrap;
+        }
+
+        .form-inline .form-control {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+    }
+</style>
 <div class="main">
     <div class="main-content">
         <div class="container-fluid">

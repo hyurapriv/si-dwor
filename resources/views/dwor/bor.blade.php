@@ -1,105 +1,127 @@
 @extends('layouts.master')
 
 @section('content')
-    <div class="main">
-        <div class="main-content">
-            <div class="container-fluid">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-sm-8">
-                            <h3 style="color:black;">Jumlah MRS</h3>
-                        </div>
-                        <div class="col-sm-4">
-                            <form action="{{ route('bor') }}" method="GET" class="form-inline">
-                                <select name="year" class="form-control mr-2">
-                                    @foreach ($tahun as $thn)
-                                        <option value="{{ $thn }}" {{ $selectedYear == $thn ? 'selected' : '' }}>
-                                            {{ $thn }}</option>
-                                    @endforeach
-                                </select>
-                                <select name="month" class="form-control mr-2">
-                                    @foreach ($bulan as $bln => $namaBln)
-                                        <option value="{{ $bln }}"
-                                            {{ $selectedMonth == $bln ? 'selected' : '' }}>{{ $namaBln }}</option>
-                                    @endforeach
-                                </select>
-                                <button type="submit" class="btn btn-primary">Filter</button>
-                            </form>
-                        </div>
+<style>
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .table th,
+    .table td {
+        white-space: nowrap;
+    }
+
+    @media (max-width: 768px) {
+        .form-inline {
+            flex-wrap: wrap;
+        }
+
+        .form-inline .form-control {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+    }
+</style>
+<div class="main">
+    <div class="main-content">
+        <div class="container-fluid">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <h3 style="color:black;">Jumlah MRS</h3>
+                    </div>
+                    <div class="col-sm-4">
+                        <form action="{{ route('bor') }}" method="GET" class="form-inline">
+                            <select name="year" class="form-control mr-2">
+                                @foreach ($tahun as $thn)
+                                    <option value="{{ $thn }}" {{ $selectedYear == $thn ? 'selected' : '' }}>
+                                        {{ $thn }}</option>
+                                @endforeach
+                            </select>
+                            <select name="month" class="form-control mr-2">
+                                @foreach ($bulan as $bln => $namaBln)
+                                    <option value="{{ $bln }}" {{ $selectedMonth == $bln ? 'selected' : '' }}>
+                                        {{ $namaBln }}</option>
+                                @endforeach
+                            </select>
+                            <button type="submit" class="btn btn-primary">Filter</button>
+                        </form>
                     </div>
                 </div>
+            </div>
 
-                <div class="panel panel-headline">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Grafik</h3>
-                    </div>
-                    <div class="panel-body">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="panel">
-                                    <div id="chartnilai"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            <div class="panel panel-headline">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Grafik</h3>
+                </div>
+                <div class="panel-body">
                     <div class="row">
                         <div class="col-md-12">
                             <div class="panel">
-                                <div class="panel-heading">
-                                    <h3 class="panel-title">Data Tabel</h3>
-                                </div>
-                                <div class="panel-body">
-                                    <table class="table table-bordered">
-                                        <thead>
+                                <div id="chartnilai" class="ct-chart"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Data Tabel</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped" style="background-color: white;">
+                                    <thead>
+                                        <tr>
+                                            <th>Tanggal</th>
+                                            <th>IGD</th>
+                                            <th>Perinatologi</th>
+                                            <th>Anak</th>
+                                            <th>Bedah</th>
+                                            <th>Gigi Umum</th>
+                                            <th>Jantung</th>
+                                            <th>Konservasi Gigi</th>
+                                            <th>Kulit Kelamin</th>
+                                            <th>Kusta</th>
+                                            <th>Mata</th>
+                                            <th>Obgyn</th>
+                                            <th>Orthopedi</th>
+                                            <th>Peny. Dalam</th>
+                                            <th>TB</th>
+                                            <th>THT KL</th>
+                                            <th>Umum</th>
+                                            <th>Rehab Medik</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($dwor as $item)
                                             <tr>
-                                                <th>tanggal</th>
-                                                <th>igd</th>
-                                                <th>perinatologi</th>
-                                                <th>anak</th>
-                                                <th>bedah</th>
-                                                <th>gigi umum</th>
-                                                <th>jantung</th>
-                                                <th>konservasi gigi</th>
-                                                <th>kulit kelamin</th>
-                                                <th>kusta</th>
-                                                <th>mata</th>
-                                                <th>obgyn</th>
-                                                <th>orthopedi</th>
-                                                <th>peny dalam</th>
-                                                <th>tb</th>
-                                                <th>tht kl</th>
-                                                <th>umum</th>
-                                                <th>rehab medik</th>
-                                                <th>Total</th>
+                                                <td>{{ $item->tgl_registrasi }}</td>
+                                                <td>{{ $item->igd }}</td>
+                                                <td>{{ $item->perinatologi }}</td>
+                                                <td>{{ $item->poli_anak }}</td>
+                                                <td>{{ $item->poli_bedah }}</td>
+                                                <td>{{ $item->poli_gigi_umum }}</td>
+                                                <td>{{ $item->poli_jantung }}</td>
+                                                <td>{{ $item->poli_konservasi_gigi }}</td>
+                                                <td>{{ $item->poli_kulit_kelamin }}</td>
+                                                <td>{{ $item->poli_kusta }}</td>
+                                                <td>{{ $item->poli_mata }}</td>
+                                                <td>{{ $item->poli_obgyn }}</td>
+                                                <td>{{ $item->poli_orthopedi }}</td>
+                                                <td>{{ $item->poli_peny_dalam }}</td>
+                                                <td>{{ $item->poli_tb }}</td>
+                                                <td>{{ $item->poli_tht_kl }}</td>
+                                                <td>{{ $item->poli_umum }}</td>
+                                                <td>{{ $item->rehab_medik }}</td>
+                                                <td>{{ $item->total }}</td>
                                             </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($dwor as $item)
-                                                <tr>
-                                                    <td>{{ $item->tgl_registrasi }}</td>
-                                                    <td>{{ $item->igd }}</td>
-                                                    <td>{{ $item->perinatologi }}</td>
-                                                    <td>{{ $item->poli_anak }}</td>
-                                                    <td>{{ $item->poli_bedah }}</td>
-                                                    <td>{{ $item->poli_gigi_umum }}</td>
-                                                    <td>{{ $item->poli_jantung }}</td>
-                                                    <td>{{ $item->poli_konservasi_gigi }}</td>
-                                                    <td>{{ $item->poli_kulit_kelamin }}</td>
-                                                    <td>{{ $item->poli_kusta }}</td>
-                                                    <td>{{ $item->poli_mata }}</td>
-                                                    <td>{{ $item->poli_obgyn }}</td>
-                                                    <td>{{ $item->poli_orthopedi }}</td>
-                                                    <td>{{ $item->poli_peny_dalam }}</td>
-                                                    <td>{{ $item->poli_tb }}</td>
-                                                    <td>{{ $item->poli_tht_kl }}</td>
-                                                    <td>{{ $item->poli_umum }}</td>
-                                                    <td>{{ $item->rehab_medik }}</td>
-                                                    <td>{{ $item->total }}</td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
+                                        @endforeach
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -107,6 +129,7 @@
             </div>
         </div>
     </div>
+</div>
 @endsection
 
 @section('footer')
