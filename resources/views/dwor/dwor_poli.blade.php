@@ -7,21 +7,20 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-sm-8">
-                            <h3 style="color:black;">Jumlah Pasien Terlayani <?php echo $xjudul; ?></h3>
+                            <h3 style="color:black;">Jumlah Pasien Terlayani {{ $xjudul }}</h3>
                         </div>
                         <div class="col-sm-4">
-                            <form action="{{ route('dwor.utama', ['data_poli' => $selectedPoli]) }}" method="GET"
-                                class="form-inline">
+                            <form action="{{ route('dwor.utama', ['poli' => $selectedPoli]) }}" method="GET" class="form-inline">
                                 <select name="year" class="form-control mr-2">
-                                    @foreach ($years as $year)
-                                        <option value="{{ $year }}" {{ $selectedYear == $year ? 'selected' : '' }}>
-                                            {{ $year }}</option>
+                                    @foreach ($tahun as $thn)
+                                        <option value="{{ $thn }}" {{ $selectedYear == $thn ? 'selected' : '' }}>
+                                            {{ $thn }}</option>
                                     @endforeach
                                 </select>
                                 <select name="month" class="form-control mr-2">
-                                    @foreach ($months as $monthNum => $monthName)
-                                        <option value="{{ $monthNum }}"
-                                            {{ $selectedMonth == $monthNum ? 'selected' : '' }}>{{ $monthName }}</option>
+                                    @foreach ($bulan as $bln => $namaBln)
+                                        <option value="{{ $bln }}"
+                                            {{ $selectedMonth == $bln ? 'selected' : '' }}>{{ $namaBln }}</option>
                                     @endforeach
                                 </select>
                                 <button type="submit" class="btn btn-primary">Filter</button>
@@ -36,38 +35,20 @@
                                             class="fa fa-filter"></i> Kompare Poli <span class="caret"></span></a>
                                     <ul class="dropdown-menu">
                                         <li><a href="{{ route('dwor.index') }}">Total</a></li>
-                                        <li class="{{ $xjudul == 'IGD' ? 'active' : '' }}"><a
-                                                href="{{ route('dwor.utama', ['data_poli' => 'igd']) }}">IGD</a></li>
-                                        <li class="{{ $xjudul == 'Poli Anak' ? 'active' : '' }}"><a
-                                                href="{{ route('dwor.utama', ['data_poli' => 'anak']) }}">Poli Anak</a>
-                                        </li>
-                                        <li class="{{ $xjudul == 'Poli Bedah' ? 'active' : '' }}"><a
-                                                href="{{ route('dwor.utama', ['data_poli' => 'bedah']) }}">Poli Bedah</a>
-                                        </li>
-                                        <li class="{{ $xjudul == 'Poli Gigi Umum' ? 'active' : '' }}"><a
-                                                href="{{ route('dwor.utama', ['data_poli' => 'gigi_umum']) }}">Poli Gigi Umum</a>
-                                        </li>
-                                        <li class="{{ $xjudul == 'Poli Jantung' ? 'active' : '' }}"><a
-                                                href="{{ route('dwor.utama', ['data_poli' => 'jantung']) }}">Poli Jantung</a>
-                                        </li>
-                                        <li class="{{ $xjudul == 'Poli Konservasi Gigi' ? 'active' : '' }}"><a
-                                                href="{{ route('dwor.utama', ['data_poli' => 'konservasi']) }}">Poli Konservasi Gigi</a>
-                                        </li>
-                                        <li class="{{ $xjudul == 'Poli Kulit' ? 'active' : '' }}"><a
-                                                href="{{ route('dwor.utama', ['data_poli' => 'kulit']) }}">Poli Kulit</a>
-                                        </li>
-                                        <li class="{{ $xjudul == 'Poli Kusta' ? 'active' : '' }}"><a
-                                                href="{{ route('dwor.utama', ['data_poli' => 'kusta']) }}">Poli Kusta</a>
-                                        </li>
-                                        <li class="{{ $xjudul == 'Poli Penyakit Dalam' ? 'active' : '' }}"><a
-                                                href="{{ route('dwor.utama', ['data_poli' => 'penyakit_dalam']) }}">Poli Penyakit Dalam</a>
-                                        </li>
-                                        <li class="{{ $xjudul == 'Poli THT KL' ? 'active' : '' }}"><a
-                                                href="{{ route('dwor.utama', ['data_poli' => 'tht_kl']) }}">Poli THT KL</a>
-                                        </li>
-                                        <li class="{{ $xjudul == 'Poli Umum' ? 'active' : '' }}"><a
-                                                href="{{ route('dwor.utama', ['data_poli' => 'umum']) }}">Poli Umum</a>
-                                        </li>
+                                        <li><a href="{{ route('dwor.utama', ['poli' => 'igd']) }}">IGD</a></li>
+                                        <li><a href="{{ route('dwor.utama', ['poli' => 'anak']) }}">Poli Anak</a></li>
+                                        <li><a href="{{ route('dwor.utama', ['poli' => 'bedah']) }}">Poli Bedah</a></li>
+                                        <li><a href="{{ route('dwor.utama', ['poli' => 'gigi_umum']) }}">Poli Gigi Umum</a></li>
+                                        <li><a href="{{ route('dwor.utama', ['poli' => 'jantung']) }}">Poli Jantung</a></li>
+                                        <li><a href="{{ route('dwor.utama', ['poli' => 'konservasi']) }}">Poli Konservasi Gigi</a></li>
+                                        <li><a href="{{ route('dwor.utama', ['poli' => 'kulit']) }}">Poli Kulit Kelamin</a></li>
+                                        <li><a href="{{ route('dwor.utama', ['poli' => 'kusta']) }}">Poli Kusta</a></li>
+                                        <li><a href="{{ route('dwor.utama', ['poli' => 'mata']) }}">Poli Mata</a></li>
+                                        <li><a href="{{ route('dwor.utama', ['poli' => 'obgyn']) }}">Poli Obgyn</a></li>
+                                        <li><a href="{{ route('dwor.utama', ['poli' => 'orthopedi']) }}">Poli Orthopedi</a></li>
+                                        <li><a href="{{ route('dwor.utama', ['poli' => 'penyakit_dalam']) }}">Poli Penyakit Dalam</a></li>
+                                        <li><a href="{{ route('dwor.utama', ['poli' => 'tht_kl']) }}">Poli THT KL</a></li>
+                                        <li><a href="{{ route('dwor.utama', ['poli' => 'umum']) }}">Poli Umum</a></li>
                                     </ul>
                                 </li>
                             </ul>
@@ -75,32 +56,23 @@
                     </div>
                 </div>
 
-                </br></br>
+                <br><br>
                 <div class="row">
                     <div class="col-md-12">
                         <div class="panel">
                             <div class="panel-heading">
-
                                 <h3 class="panel-title">Grafik</h3>
-
-
-
                             </div>
                             <div class="panel-body no-padding">
                                 <div id="chartnilai"></div>
                             </div>
-
                         </div>
                     </div>
-
                 </div>
-
-
-
             </div>
         </div>
     </div>
-@stop
+@endsection
 
 @section('footer')
     <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -164,24 +136,21 @@
                 },
             },
             series: [ 
-                {   
-                    visible: false,
+                {
                     name: 'Total',
-                    data: {!! json_encode($chartData['total']) !!} 
+                    data: {!! json_encode($chartData['total'] ?? []) !!} 
                 },
                 {
-                    name: {!! json_encode($xjudul) !!},
-                    data: {!! json_encode($chartData['data_poli']) !!} 
+                    name: '{!! $xjudul !!}',
+                    data: {!! json_encode($chartData[$poliColumn] ?? []) !!} 
                 },
                 {
-                    visible: false,
-                    name: 'Total target <?php echo $xjudul ?> ',
-                    data: {!! json_encode($chartData['target']) !!} 
+                    name: 'Target',
+                    data: {!! json_encode($chartData['target'] ?? []) !!} 
                 },
                 {
-                    visible: false,
-                    name: 'Total line <?php echo $xjudul ?> ',
-                    data: {!! json_encode($chartData['base_line']) !!}  
+                    name: 'Base line',
+                    data: {!! json_encode($chartData['base_line'] ?? []) !!}  
                 }
             ],
             responsive: {
@@ -199,5 +168,5 @@
                 }]
             }
         });
-        </script>
-@stop
+    </script>
+@endsection

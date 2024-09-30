@@ -13,16 +13,16 @@
                         <div class="form-group mx-sm-3 mb-2">
                             <label for="year" class="sr-only">Tahun</label>
                             <select name="year" id="year" class="form-control">
-                                @foreach ($dataTahun as $tahun)
-                                    <option value="{{ $tahun }}" {{ $year == $tahun ? 'selected' : '' }}>{{ $tahun }}</option>
+                                @foreach ($years as $yr)
+                                    <option value="{{ $yr }}" {{ $selectedYear == $yr ? 'selected' : '' }}>{{ $yr }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="form-group mx-sm-3 mb-2">
                             <label for="month" class="sr-only">Bulan</label>
                             <select name="month" id="month" class="form-control">
-                                @foreach ($dataBulan as $bulan)
-                                    <option value="{{ $bulan }}" {{ $month == $bulan ? 'selected' : '' }}>{{ date('F', mktime(0, 0, 0, $bulan, 1)) }}</option>
+                                @foreach ($months as $num => $name)
+                                    <option value="{{ $num }}" {{ $selectedMonth == $num ? 'selected' : '' }}>{{ $name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -72,7 +72,7 @@
         </div>
     </div>
 </div>
-@stop
+@endsection
 
 @section('footer')
 <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -157,4 +157,4 @@ Highcharts.chart('chartnilai', {
     }
 });
 </script>
-@stop
+@endsection

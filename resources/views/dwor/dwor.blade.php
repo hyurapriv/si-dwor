@@ -12,15 +12,15 @@
                         <div class="col-sm-4">
                             <form action="{{ route('dwor.index') }}" method="GET" class="form-inline">
                                 <select name="year" class="form-control mr-2">
-                                    @foreach ($years as $year)
-                                        <option value="{{ $year }}" {{ $selectedYear == $year ? 'selected' : '' }}>
-                                            {{ $year }}</option>
+                                    @foreach ($tahun as $thn)
+                                        <option value="{{ $thn }}" {{ $selectedYear == $thn ? 'selected' : '' }}>
+                                            {{ $thn }}</option>
                                     @endforeach
                                 </select>
                                 <select name="month" class="form-control mr-2">
-                                    @foreach ($months as $monthNum => $monthName)
-                                        <option value="{{ $monthNum }}"
-                                            {{ $selectedMonth == $monthNum ? 'selected' : '' }}>{{ $monthName }}</option>
+                                    @foreach ($bulan as $bln => $namaBln)
+                                        <option value="{{ $bln }}"
+                                            {{ $selectedMonth == $bln ? 'selected' : '' }}>{{ $namaBln }}</option>
                                     @endforeach
                                 </select>
                                 <button type="submit" class="btn btn-primary">Filter</button>
@@ -35,20 +35,20 @@
                                             class="fa fa-filter"></i> Kompare Poli <span class="caret"></span></a>
                                     <ul class="dropdown-menu">
                                         <li><a href="{{ route('dwor.index') }}">Total</a></li>
-                                        <li><a href="{{ route('dwor.utama', ['data_poli' => 'igd']) }}">IGD</a></li>
-                                        <li><a href="{{ route('dwor.utama', ['data_poli' => 'anak']) }}">Poli Anak</a></li>
-                                        <li><a href="{{ route('dwor.utama', ['data_poli' => 'bedah']) }}">Poli Bedah</a></li>
-                                        <li><a href="{{ route('dwor.utama', ['data_poli' => 'gigi_umum']) }}">Poli Gigi Umum</a></li>
-                                        <li><a href="{{ route('dwor.utama', ['data_poli' => 'jantung']) }}">Poli Jantung</a></li>
-                                        <li><a href="{{ route('dwor.utama', ['data_poli' => 'konservasi']) }}">Poli Konservasi Gigi</a></li>
-                                        <li><a href="{{ route('dwor.utama', ['data_poli' => 'kulit']) }}">Poli Kulit Kelamin</a></li>
-                                        <li><a href="{{ route('dwor.utama', ['data_poli' => 'kusta']) }}">Poli Kusta</a></li>
-                                        <li><a href="{{ route('dwor.utama', ['data_poli' => 'mata']) }}">Poli Mata</a></li>
-                                        <li><a href="{{ route('dwor.utama', ['data_poli' => 'obgyn']) }}">Poli Obgyn</a></li>
-                                        <li><a href="{{ route('dwor.utama', ['data_poli' => 'orthopedi']) }}">Poli Orthopedi</a></li>
-                                        <li><a href="{{ route('dwor.utama', ['data_poli' => 'penyakit_dalam']) }}">Poli Penyakit Dalam</a></li>
-                                        <li><a href="{{ route('dwor.utama', ['data_poli' => 'tht_kl']) }}">Poli THT KL</a></li>
-                                        <li><a href="{{ route('dwor.utama', ['data_poli' => 'umum']) }}">Poli Umum</a></li>
+                                        <li><a href="{{ route('dwor.utama', ['poli' => 'igd']) }}">IGD</a></li>
+                                        <li><a href="{{ route('dwor.utama', ['poli' => 'anak']) }}">Poli Anak</a></li>
+                                        <li><a href="{{ route('dwor.utama', ['poli' => 'bedah']) }}">Poli Bedah</a></li>
+                                        <li><a href="{{ route('dwor.utama', ['poli' => 'gigi_umum']) }}">Poli Gigi Umum</a></li>
+                                        <li><a href="{{ route('dwor.utama', ['poli' => 'jantung']) }}">Poli Jantung</a></li>
+                                        <li><a href="{{ route('dwor.utama', ['poli' => 'konservasi']) }}">Poli Konservasi Gigi</a></li>
+                                        <li><a href="{{ route('dwor.utama', ['poli' => 'kulit']) }}">Poli Kulit Kelamin</a></li>
+                                        <li><a href="{{ route('dwor.utama', ['poli' => 'kusta']) }}">Poli Kusta</a></li>
+                                        <li><a href="{{ route('dwor.utama', ['poli' => 'mata']) }}">Poli Mata</a></li>
+                                        <li><a href="{{ route('dwor.utama', ['poli' => 'obgyn']) }}">Poli Obgyn</a></li>
+                                        <li><a href="{{ route('dwor.utama', ['poli' => 'orthopedi']) }}">Poli Orthopedi</a></li>
+                                        <li><a href="{{ route('dwor.utama', ['poli' => 'penyakit_dalam']) }}">Poli Penyakit Dalam</a></li>
+                                        <li><a href="{{ route('dwor.utama', ['poli' => 'tht_kl']) }}">Poli THT KL</a></li>
+                                        <li><a href="{{ route('dwor.utama', ['poli' => 'umum']) }}">Poli Umum</a></li>
                                     </ul>
                                 </li>
                             </ul>
@@ -99,7 +99,7 @@
                 }
             },
             xAxis: {
-                categories: {!! json_encode($chartData['tanggal']) !!},
+                categories: {!! json_encode($chartData['tanggal'] ?? []) !!},
                 title: {
                     text: 'Tanggal',
                     style: {
@@ -136,18 +136,20 @@
             series: [ 
                 {
                     name: 'Total',
-                    data: {!! json_encode($chartData['total']) !!} 
+                    data: {!! json_encode($chartData['total'] ?? []) !!} 
                 },
+                @if(isset($chartData['target']))
                 {
-                    visible: false,
                     name: 'Target',
                     data: {!! json_encode($chartData['target']) !!} 
                 },
+                @endif
+                @if(isset($chartData['base_line']))
                 {
-                    visible: false,
                     name: 'Base line',
-                    data: {!! json_encode($chartData['base_line']) !!} 
+                    data: {!! json_encode($chartData['base_line']) !!}  
                 }
+                @endif
             ],
             responsive: {
                 rules: [{
@@ -164,5 +166,5 @@
                 }]
             }
         });
-        </script>
-@stop
+    </script>
+@endsection
