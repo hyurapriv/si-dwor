@@ -32,9 +32,18 @@ class DworController extends Controller
     private function getBulan()
     {
         return [
-            1 => 'Januari', 2 => 'Februari', 3 => 'Maret', 4 => 'April',
-            5 => 'Mei', 6 => 'Juni', 7 => 'Juli', 8 => 'Agustus',
-            9 => 'September', 10 => 'Oktober', 11 => 'November', 12 => 'Desember'
+            1 => 'Januari',
+            2 => 'Februari',
+            3 => 'Maret',
+            4 => 'April',
+            5 => 'Mei',
+            6 => 'Juni',
+            7 => 'Juli',
+            8 => 'Agustus',
+            9 => 'September',
+            10 => 'Oktober',
+            11 => 'November',
+            12 => 'Desember'
         ];
     }
 
@@ -76,68 +85,190 @@ class DworController extends Controller
         return $chartData;
     }
 
+    
+
     public function index(Request $request)
     {
-        $year = $request->input('year', Carbon::now()->year);
-        $month = $request->input('month', Carbon::now()->month);
+        $year = $request->input('year', date('Y'));
+        $month = $request->input('month', date('m'));
 
-        $data = $this->fetchFilteredData('dwor_jkp', $year, $month);
-        $chartData = $this->prepareChartData($data, ['total']);
+        $data = DB::table('dwor_jkp')
+            ->whereYear('tgl_registrasi', $year)
+            ->whereMonth('tgl_registrasi', $month)
+            ->orderBy('tgl_registrasi', 'asc')
+            ->get();
 
-        $years = $this->getTahun('dwor_jkp');
-        $months = $this->getBulanFilter($year);
 
-        if (!array_key_exists($month, $months)) {
-            $month = array_key_last($months);
-        }
+        $tanggal = $data->pluck('tgl')->toArray();
+        $total = $data->pluck('total')->map(function ($item) {
+            return intval($item);
+        })->toArray();
+        $base_line = array_fill(0, count($data), 117);
+        $target = array_fill(0, count($data), 136);
+
+        $years = DB::table('dwor_jkp')->selectRaw('YEAR(tgl_registrasi) as year')->distinct()->pluck('year');
+
+        $chartData = [
+            'tanggal' => $tanggal,
+            'total' => $total,
+            'base_line' => $base_line,
+            'target' => $target
+        ];
 
         return view('dwor.dwor', [
             'chartData' => $chartData,
+            'tanggal' => $tanggal,
+            'total' => $total,
             'dwor' => $data,
             'judul' => 'index',
             'xjudul' => "Secara Total",
-            'tahun' => $years,
-            'bulan' => $months,
+            'base_line' => $base_line,
+            'target' => $target,
+            'years' => $years,
             'selectedYear' => $year,
-            'selectedMonth' => $month,
+            'selectedMonth' => $month
         ]);
     }
 
-public function utama(Request $request, $poli = null)
-{
-    Log::info('Received poli value: ' . $poli); // Add this line for debugging
+    public function utama(Request $request, $poli)
+    {
+        $year = $request->input('year', date('Y'));
+        $month = $request->input('month', date('m'));
 
-    $year = $request->input('year', Carbon::now()->year);
-    $month = $request->input('month', Carbon::now()->month);
+        $query = DB::table('dwor_jkp')
+            ->whereYear('tgl_registrasi', $year)
+            ->whereMonth('tgl_registrasi', $month)
+            ->orderBy('tgl_registrasi', 'asc');
 
-    $data = $this->fetchFilteredData('dwor_jkp', $year, $month);
-    $poliColumn = $this->getPoliColumn($poli);
-    Log::info('Poli column: ' . $poliColumn); // Add this line for debugging
+        switch ($poli) {
+            case 'igd':
+                $data = $query->select('tgl', 'total', 'igd')->get();
+                $data_poli = $data->pluck('igd')->map(function($item) { return intval($item); })->toArray();
+                $nama_poli = 'IGD';
+                $base_line = array_fill(0, count($data), 5);
+                $target = array_fill(0, count($data), 7);
+                break;
+            case 'anak':
+                $data = $query->select('tgl', 'total', 'poli_anak')->get();
+                $data_poli = $data->pluck('poli_anak')->map(function($item) { return intval($item); })->toArray();
+                $nama_poli = 'Poli Anak';
+                $base_line = array_fill(0, count($data), 1);
+                $target = array_fill(0, count($data), 1);
+                break;
+            case 'bedah':
+                $data = $query->select('tgl', 'total', 'poli_bedah')->get();
+                $data_poli = $data->pluck('poli_bedah')->map(function($item) { return intval($item); })->toArray();
+                $nama_poli = 'Poli Bedah';
+                $base_line = array_fill(0, count($data), 1);
+                $target = array_fill(0, count($data), 1);
+                break;
+            case 'gigi_umum':
+                $data = $query->select('tgl', 'total', 'poli_gigi_umum')->get();
+                $data_poli = $data->pluck('poli_gigi_umum')->map(function($item) { return intval($item); })->toArray();
+                $nama_poli = 'Poli Gigi Umum';
+                $base_line = array_fill(0, count($data), 1);
+                $target = array_fill(0, count($data), 1);
+                break;
+            case 'jantung':
+                $data = $query->select('tgl', 'total', 'poli_jantung')->get();
+                $data_poli = $data->pluck('poli_jantung')->map(function($item) { return intval($item); })->toArray();
+                $nama_poli = 'Poli Jantung';
+                $base_line = array_fill(0, count($data), 1);
+                $target = array_fill(0, count($data), 1);
+                break;
+            case 'konservasi':
+                $data = $query->select('tgl', 'total', 'poli_konservasi_gigi')->get();
+                $data_poli = $data->pluck('poli_konservasi_gigi')->map(function($item) { return intval($item); })->toArray();
+                $nama_poli = 'Poli Konservasi Gigi';
+                $base_line = array_fill(0, count($data), 1);
+                $target = array_fill(0, count($data), 1);
+                break;
+            case 'kulit':
+                $data = $query->select('tgl', 'total', 'poli_kulit_kelamin')->get();
+                $data_poli = $data->pluck('poli_kulit_kelamin')->map(function($item) { return intval($item); })->toArray();
+                $nama_poli = 'Poli Kulit Kelamin';
+                $base_line = array_fill(0, count($data), 1);
+                $target = array_fill(0, count($data), 1);
+                break;
+            case 'kusta':
+                $data = $query->select('tgl', 'total', 'poli_kusta')->get();
+                $data_poli = $data->pluck('poli_kusta')->map(function($item) { return intval($item); })->toArray();
+                $nama_poli = 'Poli Kusta';
+                $base_line = array_fill(0, count($data), 1);
+                $target = array_fill(0, count($data), 1);
+                break;
+            case 'mata':
+                $data = $query->select('tgl', 'total', 'poli_mata')->get();
+                $data_poli = $data->pluck('poli_mata')->map(function($item) { return intval($item); })->toArray();
+                $nama_poli = 'Poli Mata';
+                $base_line = array_fill(0, count($data), 1);
+                $target = array_fill(0, count($data), 1);
+                break;
+            case 'obgyn':
+                $data = $query->select('tgl', 'total', 'poli_obgyn')->get();
+                $data_poli = $data->pluck('poli_obgyn')->map(function($item) { return intval($item); })->toArray();
+                $nama_poli = 'Poli Obgyn';
+                $base_line = array_fill(0, count($data), 1);
+                $target = array_fill(0, count($data), 1);
+                break;
+            case 'orthopedi':
+                $data = $query->select('tgl', 'total', 'poli_orthopedi')->get();
+                $data_poli = $data->pluck('poli_orthopedi')->map(function($item) { return intval($item); })->toArray();
+                $nama_poli = 'Poli Orthopedi';
+                $base_line = array_fill(0, count($data), 1);
+                $target = array_fill(0, count($data), 1);
+                break;
+            case 'penyakit_dalam':
+                $data = $query->select('tgl', 'total', 'poli_peny_dalam')->get();
+                $data_poli = $data->pluck('poli_peny_dalam')->map(function($item) { return intval($item); })->toArray();
+                $nama_poli = 'Poli Penyakit Dalam';
+                $base_line = array_fill(0, count($data), 1);
+                $target = array_fill(0, count($data), 1);
+                break;
+            case 'tht_kl':
+                $data = $query->select('tgl', 'total', 'poli_tht_kl')->get();
+                $data_poli = $data->pluck('poli_tht_kl')->map(function($item) { return intval($item); })->toArray();
+                $nama_poli = 'Poli THT KL';
+                $base_line = array_fill(0, count($data), 1);
+                $target = array_fill(0, count($data), 1);
+                break;
+            case 'umum':
+                $data = $query->select('tgl', 'total', 'poli_umum')->get();
+                $data_poli = $data->pluck('poli_umum')->map(function($item) { return intval($item); })->toArray();
+                $nama_poli = 'Poli Umum';
+                $base_line = array_fill(0, count($data), 1);
+                $target = array_fill(0, count($data), 1);
+                break;
+        }
 
-    $chartData = $this->prepareChartData($data, ['total', $poliColumn]);
+        $tanggal = $data->pluck('tgl')->toArray();
+        $total = $data->pluck('total')->map(function($item) { return intval($item); })->toArray();
 
-    $years = $this->getTahun('dwor_jkp');
-    $months = $this->getBulanFilter($year);
+        $years = DB::table('dwor_jkp')->selectRaw('YEAR(tgl_registrasi) as year')->distinct()->pluck('year');
 
-    if (!array_key_exists($month, $months)) {
-        $month = array_key_last($months);
+        $chartData = [
+            'tanggal' => $tanggal,
+            'total' => $total,
+            'data_poli' => $data_poli,
+            'base_line' => $base_line,
+            'target' => $target
+        ];
+
+        return view('dwor.dwor_poli', [
+            'chartData' => $chartData,
+            'tanggal' => $tanggal,
+            'total' => $total,
+            'data_poli' => $data_poli,
+            'judul' => 'index',
+            'xjudul' => $nama_poli,
+            'base_line' => $base_line,
+            'target' => $target,
+            'years' => $years,
+            'selectedYear' => $year,
+            'selectedMonth' => $month,
+            'selectedPoli' => $poli
+        ]);
     }
-
-    $poliInfo = $this->getPoliInfo($poli);
-    Log::info('Poli info: ' . json_encode($poliInfo)); // Add this line for debugging
-
-    return view('dwor.dwor_poli', [
-        'chartData' => $chartData,
-        'judul' => 'index',
-        'xjudul' => $poliInfo['nama'],
-        'tahun' => $years,
-        'bulan' => $months,
-        'selectedYear' => $year,
-        'selectedMonth' => $month,
-        'selectedPoli' => $poli,
-        'poliColumn' => $poliColumn,
-    ]);
-}
 
     public function bor(Request $request)
     {
@@ -333,11 +464,11 @@ public function utama(Request $request, $poli = null)
             'tht_kl' => ['nama' => 'Poli THT KL', 'base_line' => 4, 'target' => 4],
             'umum' => ['nama' => 'Poli Umum', 'base_line' => 2, 'target' => 2],
         ];
-    
-        Log::info('Getting poli info for: ' . $poli); // Add this line for debugging
+
+        Log::info('Getting poli info for: ' . $poli);
         return $poliInfoMap[$poli] ?? ['nama' => 'Unknown', 'base_line' => 0, 'target' => 0];
     }
-    
+
     private function getPoliColumn($poli)
     {
         $columnMap = [
@@ -356,8 +487,8 @@ public function utama(Request $request, $poli = null)
             'tht_kl' => 'poli_tht_kl',
             'umum' => 'poli_umum',
         ];
-    
-        Log::info('Getting poli column for: ' . $poli); // Add this line for debugging
+
+        Log::info('Getting poli column for: ' . $poli);
         return $columnMap[$poli] ?? 'unknown_column';
     }
 }

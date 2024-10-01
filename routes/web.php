@@ -35,7 +35,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/',[DworController::class,'index'])->name('dwor.index');
 
-Route::get('/dwor/{data_poli?}',[DworController::class,'utama'])->name('dwor.utama');
+Route::get('/dwor/{poli}', [DworController::class, 'utama'])->name('dwor.utama');
 Route::get('/jri',[DworController::class,'jri'])->name('jri');
 Route::get('/jkpl',[DworController::class,'jkpl'])->name('jkpl');
 Route::get('/jkpb',[DworController::class,'jkpb'])->name('jkpb');
