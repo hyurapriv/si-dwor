@@ -175,6 +175,7 @@ class DworController extends Controller
         $target = array_fill(0, count($data), 136);
 
         $years = DB::table('dwor_jkp')->selectRaw('YEAR(tgl_registrasi) as year')->distinct()->pluck('year');
+        $months = $this->getBulan();
 
         $chartData = [
             'tanggal' => $tanggal,
@@ -192,6 +193,7 @@ class DworController extends Controller
             'xjudul' => "Secara Total",
             'base_line' => $base_line,
             'target' => $target,
+            'months' => $months,
             'years' => $years,
             'selectedYear' => $year,
             'selectedMonth' => $month
@@ -343,6 +345,7 @@ class DworController extends Controller
         })->toArray();
 
         $years = DB::table('dwor_jkp')->selectRaw('YEAR(tgl_registrasi) as year')->distinct()->pluck('year');
+        $months = $this->getBulan();
 
         $chartData = [
             'tanggal' => $tanggal,
@@ -361,6 +364,7 @@ class DworController extends Controller
             'xjudul' => $nama_poli,
             'base_line' => $base_line,
             'target' => $target,
+            'months' => $months,
             'years' => $years,
             'selectedYear' => $year,
             'selectedMonth' => $month,
@@ -542,51 +546,5 @@ class DworController extends Controller
             'selectedYear' => $year,
             'selectedMonth' => $month,
         ]);
-    }
-
-    private function getPoliInfo($poli)
-    {
-        $poliInfoMap = [
-            'igd' => ['nama' => 'IGD', 'base_line' => 5, 'target' => 7],
-            'anak' => ['nama' => 'Poli Anak', 'base_line' => 1, 'target' => 1],
-            'bedah' => ['nama' => 'Poli Bedah', 'base_line' => 4, 'target' => 4],
-            'gigi_umum' => ['nama' => 'Poli Gigi Umum', 'base_line' => 1, 'target' => 1],
-            'jantung' => ['nama' => 'Poli Jantung', 'base_line' => 7, 'target' => 8],
-            'konservasi' => ['nama' => 'Poli Konservasi Gigi', 'base_line' => 1, 'target' => 1],
-            'kulit' => ['nama' => 'Poli Kulit Kelamin', 'base_line' => 12, 'target' => 14],
-            'kusta' => ['nama' => 'Poli Kusta', 'base_line' => 4, 'target' => 5],
-            'mata' => ['nama' => 'Poli Mata', 'base_line' => 62, 'target' => 74],
-            'obgyn' => ['nama' => 'Poli Obgyn', 'base_line' => 2, 'target' => 2],
-            'orthopedi' => ['nama' => 'Poli Orthopedi', 'base_line' => 4, 'target' => 5],
-            'penyakit_dalam' => ['nama' => 'Poli Penyakit Dalam', 'base_line' => 13, 'target' => 15],
-            'tht_kl' => ['nama' => 'Poli THT KL', 'base_line' => 4, 'target' => 4],
-            'umum' => ['nama' => 'Poli Umum', 'base_line' => 2, 'target' => 2],
-        ];
-
-        Log::info('Getting poli info for: ' . $poli);
-        return $poliInfoMap[$poli] ?? ['nama' => 'Unknown', 'base_line' => 0, 'target' => 0];
-    }
-
-    private function getPoliColumn($poli)
-    {
-        $columnMap = [
-            'igd' => 'igd',
-            'anak' => 'poli_anak',
-            'bedah' => 'poli_bedah',
-            'gigi_umum' => 'poli_gigi_umum',
-            'jantung' => 'poli_jantung',
-            'konservasi' => 'poli_konservasi_gigi',
-            'kulit' => 'poli_kulit_kelamin',
-            'kusta' => 'poli_kusta',
-            'mata' => 'poli_mata',
-            'obgyn' => 'poli_obgyn',
-            'orthopedi' => 'poli_orthopedi',
-            'penyakit_dalam' => 'poli_peny_dalam',
-            'tht_kl' => 'poli_tht_kl',
-            'umum' => 'poli_umum',
-        ];
-
-        Log::info('Getting poli column for: ' . $poli);
-        return $columnMap[$poli] ?? 'unknown_column';
     }
 }

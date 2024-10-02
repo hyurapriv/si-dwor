@@ -18,9 +18,9 @@
                                 @endforeach
                             </select>
                             <select name="month" class="form-control mr-2">
-                                @for($m = 1; $m <= 12; $m++)
-                                    <option value="{{ $m }}" {{ $selectedMonth == $m ? 'selected' : '' }}>{{ date('F', mktime(0, 0, 0, $m, 1)) }}</option>
-                                @endfor
+                                    @foreach($months as $key => $value)
+                                        <option value="{{ $key }}" {{ $selectedMonth == $key ? 'selected' : '' }}>{{ $value }}</option>
+                                    @endforeach
                             </select>
                             <button type="submit" class="btn btn-primary">Filter</button>
                         </form>
