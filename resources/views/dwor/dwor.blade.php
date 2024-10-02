@@ -7,7 +7,7 @@
         <div class="container-fluid">
             <div class="container">
                 <div class="row">
-                    <div class="col-sm-8">
+                    <div class="col-sm-7">
                         <h3 style="color:black;">Jumlah Pasien Terlayani Secara Total</h3>
                     </div>
                     <div class="col-sm-4">
